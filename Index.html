@@ -1,45 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Meal Finder</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="./Style.css"/>
 </head>
 <body>
-  <header>
-    <div class="logo">🍴 MEAL FINDER</div>
-    <div class="menu-toggle">☰</div>
+  <!-- Top Bar -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="home-icon">🏠</span>
+      <span class="brand-text">MEAL FINDER</span>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
   </header>
 
-  <!-- Sidebar Menu -->
-  <aside id="sidebar" class="hidden">
-    <button id="closeBtn">✖</button>
-    <ul id="categoryMenu"></ul>
+  <!-- Slide-out Sidebar -->
+  <aside id="drawer" class="drawer">
+    <div class="drawer-head">
+      <h3>Categories</h3>
+      <button id="drawerClose" class="close-btn" aria-label="Close menu">✕</button>
+    </div>
+    <ul id="drawerList" class="drawer-list"></ul>
   </aside>
+  <div id="backdrop" class="backdrop"></div>
 
-  <!-- Hero Section -->
+  <!-- Hero -->
   <section class="hero">
-    <input type="text" id="searchInput" placeholder="Search recipes here...">
-    <button id="searchBtn">🔍</button>
-    <h2>What are your favorite cuisines?</h2>
-    <p>PERSONALIZE YOUR EXPERIENCE</p>
+    <div class="hero-inner">
+      <div class="searchbar">
+        <input id="searchInput" type="text" placeholder="Search recipes here ..." />
+        <button id="searchBtn" class="search-btn" aria-label="Search">
+          🔍
+        </button>
+      </div>
+      <h1 class="hero-title">What are your favorite cuisines?</h1>
+      <p class="hero-sub">PERSONALIZE YOUR EXPERIENCE</p>
+    </div>
   </section>
 
-  <!-- Meals Section -->
-  <section id="mealsSection">
-    <h2>Meals</h2>
-    <div id="meals" class="grid"></div>
+  <!-- Category description (appears after choosing a category) -->
+  <section id="categoryAbout" class="category-about hidden">
+    <h3 id="aboutTitle"></h3>
+    <p id="aboutText"></p>
   </section>
 
-  <!-- Categories Section -->
-  <section id="categoriesSection">
-    <h2>Categories</h2>
-    <div id="categories" class="grid"></div>
+  <!-- Meals (search results / filtered) -->
+  <section class="section">
+    <div class="section-head">
+      <h2>Meals</h2>
+    </div>
+    <div id="mealsGrid" class="card-grid"></div>
+  </section>
+
+  <!-- Categories grid (always visible like screenshots) -->
+  <section class="section">
+    <div class="section-head">
+      <h2>Categories</h2>
+    </div>
+    <div id="categoriesGrid" class="card-grid"></div>
   </section>
 
   <!-- Meal Details -->
-  <section id="mealDetails" class="hidden"></section>
+  <section id="mealDetails" class="details hidden">
+    <div class="breadcrumb" id="breadcrumb"></div>
+
+    <div class="details-body">
+      <div class="details-image">
+        <img id="detailsImg" alt="meal"/>
+      </div>
+      <div class="details-meta">
+        <div class="meta-line">
+          <span class="meta-label">CATEGORY:</span>
+          <span id="detailsCategory" class="meta-value"></span>
+        </div>
+        <div class="meta-line">
+          <span class="meta-label">Source:</span>
+          <a id="detailsSource" target="_blank" rel="noopener"></a>
+        </div>
+        <div class="meta-line">
+          <span class="meta-label">Tags:</span>
+          <div id="detailsTags" class="tags"></div>
+        </div>
+
+        <div class="ingbox">
+          <h4>Ingredients</h4>
+          <ul id="ingredientsList" class="bullets"></ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="measure-instructions">
+      <div class="measure">
+        <h4>Measure:</h4>
+        <ul id="measureList" class="ticks"></ul>
+      </div>
+      <div class="instructions">
+        <h4>Instructions:</h4>
+        <ol id="instructionsList" class="steps"></ol>
+      </div>
+    </div>
+  </section>
 
   <script src="./Script.js"></script>
 </body>
