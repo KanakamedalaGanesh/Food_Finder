@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meal Finder</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="logo">🍴 MEAL FINDER</div>
+    <div class="menu-toggle">☰</div>
+  </header>
+
+  <!-- Sidebar Menu -->
+  <aside id="sidebar" class="hidden">
+    <button id="closeBtn">✖</button>
+    <ul id="categoryMenu"></ul>
+  </aside>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <input type="text" id="searchInput" placeholder="Search recipes here...">
+    <button id="searchBtn">🔍</button>
+    <h2>What are your favorite cuisines?</h2>
+    <p>PERSONALIZE YOUR EXPERIENCE</p>
+  </section>
+
+  <!-- Meals Section -->
+  <section id="mealsSection">
+    <h2>Meals</h2>
+    <div id="meals" class="grid"></div>
+  </section>
+
+  <!-- Categories Section -->
+  <section id="categoriesSection">
+    <h2>Categories</h2>
+    <div id="categories" class="grid"></div>
+  </section>
+
+  <!-- Meal Details -->
+  <section id="mealDetails" class="hidden"></section>
+
+  <script src="./Script.js"></script>
+</body>
+</html>
