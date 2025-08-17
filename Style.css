@@ -48,7 +48,7 @@ html,body{margin:0;padding:0;font-family:Inter,system-ui,Arial,sans-serif;color:
 /* --- Hero --- */
 .hero{
   position:relative; min-height:280px; display:grid; place-items:center; text-align:center; color:#fff;
-  background:url("https://images.unsplash.com/photo-1514517220032-43d0aa4562f7?q=80&w=2062&auto=format&fit=crop") center/cover no-repeat;
+  background:url("./Assests/Hero-Section.jpg") center/cover no-repeat;
 }
 .hero::after{
   content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.35));
@@ -126,3 +126,4 @@ html,body{margin:0;padding:0;font-family:Inter,system-ui,Arial,sans-serif;color:
   .details-body{ grid-template-columns: 1fr }
   .measure-instructions{ grid-template-columns: 1fr }
 }
+
