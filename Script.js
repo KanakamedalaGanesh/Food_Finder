@@ -1,4 +1,4 @@
-/* ===== ELEMENTS ===== */
+/* ==== Elements ==== */
 const drawer = document.getElementById('drawer');
 const backdrop = document.getElementById('backdrop');
 const hamburger = document.getElementById('hamburger');
@@ -10,6 +10,9 @@ const searchBtn = document.getElementById('searchBtn');
 
 const categoriesGrid = document.getElementById('categoriesGrid');
 const mealsGrid = document.getElementById('mealsGrid');
+const mealsSection = document.getElementById('mealsSection');
+const mealsHeading = document.getElementById('mealsHeading');
+const categoriesSection = document.getElementById('categoriesSection');
 
 const categoryAbout = document.getElementById('categoryAbout');
 const aboutTitle = document.getElementById('aboutTitle');
@@ -25,182 +28,146 @@ const ingredientsList = document.getElementById('ingredientsList');
 const measureList = document.getElementById('measureList');
 const instructionsList = document.getElementById('instructionsList');
 
-/* ===== STATE ===== */
-let CATEGORIES = [];        // full category data with descriptions
-let CATEGORY_MAP = {};      // quick lookup by name
+/* ==== State ==== */
+let CATEGORIES = [];
+let CATEGORY_MAP = {};
 
-/* ===== HELPERS ===== */
+/* ==== API ==== */
 const api = {
   categories: 'https://www.themealdb.com/api/json/v1/1/categories.php',
-  search: (q) => `https://www.themealdb.com/api/json/v1/1/search.php?s=${encodeURIComponent(q)}`,
-  filterByCat: (c) => `https://www.themealdb.com/api/json/v1/1/filter.php?c=${encodeURIComponent(c)}`,
-  details: (id) => `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${encodeURIComponent(id)}`
+  search: q => `https://www.themealdb.com/api/json/v1/1/search.php?s=${encodeURIComponent(q)}`,
+  filterByCat: c => `https://www.themealdb.com/api/json/v1/1/filter.php?c=${encodeURIComponent(c)}`,
+  details: id => `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`
 };
 
-const openDrawer = () => { drawer.classList.add('open'); backdrop.classList.add('show'); }
-const closeDrawer = () => { drawer.classList.remove('open'); backdrop.classList.remove('show'); }
+/* ==== View Control ==== */
+function setView(mode){
+  detailsSection.classList.add('hidden');
+  categoryAbout.classList.add('hidden');
+  mealsSection.classList.add('hidden');
+  categoriesSection.classList.add('hidden');
 
-/* ===== UI WIRES ===== */
-hamburger.addEventListener('click', openDrawer);
-drawerClose.addEventListener('click', closeDrawer);
-backdrop.addEventListener('click', closeDrawer);
+  if(mode==='home'){ categoriesSection.classList.remove('hidden'); }
+  if(mode==='category'){
+    categoryAbout.classList.remove('hidden');
+    mealsSection.classList.remove('hidden');
+    categoriesSection.classList.remove('hidden');
+  }
+  if(mode==='details'){ detailsSection.classList.remove('hidden'); window.scrollTo({top:0,behavior:'smooth'}); }
+}
 
-searchBtn.addEventListener('click', () => doSearch());
-searchInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ doSearch(); }});
+/* ==== Drawer ==== */
+hamburger.addEventListener('click', ()=>{ drawer.classList.add('open'); backdrop.classList.add('show'); });
+drawerClose.addEventListener('click', ()=>{ drawer.classList.remove('open'); backdrop.classList.remove('show'); });
+backdrop.addEventListener('click', ()=>{ drawer.classList.remove('open'); backdrop.classList.remove('show'); });
 
-/* Delegate clicks inside mealsGrid so cards always work */
-mealsGrid.addEventListener('click', (e) => {
-  const card = e.target.closest('[data-id]');
-  if (!card) return;
-  const id = card.getAttribute('data-id');
-  showMealDetails(id);
-  window.scrollTo({ top: detailsSection.offsetTop - 10, behavior: 'smooth' });
-});
+/* ==== Search ==== */
+searchBtn.addEventListener('click', ()=>doSearch());
+searchInput.addEventListener('keydown', e=>{ if(e.key==='Enter') doSearch(); });
 
-/* Delegate clicks in categoriesGrid */
-categoriesGrid.addEventListener('click', (e) => {
-  const cat = e.target.closest('[data-cat]');
-  if (!cat) return;
-  const name = cat.getAttribute('data-cat');
-  loadMealsByCategory(name);
-  window.scrollTo({ top: document.querySelector('.section').offsetTop - 10, behavior: 'smooth' });
-});
+async function doSearch(){
+  const q = searchInput.value.trim();
+  if(!q){ setView('home'); return; }
+  const res = await fetch(api.search(q));
+  const data = await res.json();
+  const meals = data.meals || [];
+  mealsHeading.textContent = 'Meals';
+  renderMeals(meals);
+  setView('category');
+}
 
-/* Drawer category click */
-drawerList.addEventListener('click', (e) => {
-  const li = e.target.closest('li[data-cat]');
-  if (!li) return;
-  closeDrawer();
-  const name = li.getAttribute('data-cat');
-  loadMealsByCategory(name);
-  window.scrollTo({ top: document.querySelector('.section').offsetTop - 10, behavior: 'smooth' });
-});
-
-/* ===== LOAD CATEGORIES ===== */
+/* ==== Categories ==== */
 async function loadCategories(){
   const res = await fetch(api.categories);
   const { categories } = await res.json();
-  CATEGORIES = categories || [];
-  CATEGORY_MAP = Object.fromEntries(CATEGORIES.map(c => [c.strCategory, c]));
+  CATEGORIES = categories;
+  CATEGORY_MAP = Object.fromEntries(CATEGORIES.map(c=>[c.strCategory,c]));
 
-  // Drawer list
-  drawerList.innerHTML = CATEGORIES.map(c => `<li data-cat="${c.strCategory}">${c.strCategory}</li>`).join('');
-
-  // Grid
-  categoriesGrid.innerHTML = CATEGORIES.map(c => `
-    <article class="card" data-cat="${c.strCategory}" title="${c.strCategory}">
+  drawerList.innerHTML = CATEGORIES.map(c=>`<li data-cat="${c.strCategory}">${c.strCategory}</li>`).join('');
+  categoriesGrid.innerHTML = CATEGORIES.map(c=>`
+    <article class="card" data-cat="${c.strCategory}">
       <img src="${c.strCategoryThumb}" alt="${c.strCategory}">
       <div class="card-body">
         <span class="badge">${c.strCategory.toUpperCase()}</span>
       </div>
-    </article>
-  `).join('');
+    </article>`).join('');
 }
+categoriesGrid.addEventListener('click', e=>{
+  const card = e.target.closest('[data-cat]'); if(!card) return;
+  loadMealsByCategory(card.dataset.cat);
+});
+drawerList.addEventListener('click', e=>{
+  const li = e.target.closest('li[data-cat]'); if(!li) return;
+  drawer.classList.remove('open'); backdrop.classList.remove('show');
+  loadMealsByCategory(li.dataset.cat);
+});
 
-/* ===== SEARCH ===== */
-async function doSearch(){
-  const q = searchInput.value.trim();
-  categoryAbout.classList.add('hidden'); // Hide category about when searching
-  if(!q){ mealsGrid.innerHTML = ''; return; }
+async function loadMealsByCategory(name){
+  const cat = CATEGORY_MAP[name];
+  aboutTitle.textContent = cat.strCategory;
+  aboutText.textContent = cat.strCategoryDescription;
 
-  const res = await fetch(api.search(q));
+  const res = await fetch(api.filterByCat(name));
   const data = await res.json();
   const meals = data.meals || [];
-  renderMeals(meals);
+  mealsHeading.textContent = 'Meals';
+  renderMeals(meals,name);
+  setView('category');
 }
 
-/* ===== FILTER BY CATEGORY ===== */
-async function loadMealsByCategory(categoryName){
-  // Show description box
-  const cat = CATEGORY_MAP[categoryName];
-  if (cat){
-    aboutTitle.textContent = cat.strCategory;
-    aboutText.textContent = cat.strCategoryDescription;
-    categoryAbout.classList.remove('hidden');
-  }else{
-    categoryAbout.classList.add('hidden');
-  }
-
-  const res = await fetch(api.filterByCat(categoryName));
-  const data = await res.json();
-  const meals = data.meals || [];
-  renderMeals(meals, categoryName);
-}
-
-/* ===== RENDER MEAL CARDS ===== */
-function renderMeals(meals, catName){
-  detailsSection.classList.add('hidden'); // hide details when listing
-  mealsGrid.innerHTML = meals.map(m => `
-    <article class="card" data-id="${m.idMeal}" title="${m.strMeal}">
+/* ==== Meals ==== */
+function renderMeals(meals,catName){
+  mealsGrid.innerHTML = meals.map(m=>`
+    <article class="card" data-id="${m.idMeal}">
       <img src="${m.strMealThumb}" alt="${m.strMeal}">
       <div class="card-body">
-        ${catName ? `<span class="badge">${catName}</span>` : ''}
+        ${catName?`<span class="badge">${catName}</span>`:''}
         <div class="card-title">${m.strMeal}</div>
       </div>
-    </article>
-  `).join('');
-
-  if(meals.length === 0){
-    mealsGrid.innerHTML = `<p style="color:#666">No meals found.</p>`;
-  }
+    </article>`).join('');
+  if(!meals.length) mealsGrid.innerHTML = `<p>No meals found.</p>`;
 }
+mealsGrid.addEventListener('click', e=>{
+  const card = e.target.closest('[data-id]'); if(!card) return;
+  showMealDetails(card.dataset.id);
+});
 
-/* ===== MEAL DETAILS ===== */
+/* ==== Meal Details ==== */
 async function showMealDetails(id){
   const res = await fetch(api.details(id));
   const data = await res.json();
-  const meal = data.meals && data.meals[0];
-  if(!meal) return;
+  const meal = data.meals && data.meals[0]; if(!meal) return;
 
-  // Breadcrumb (like screenshot title bar)
-  breadcrumb.textContent = `▶ ${meal.strMeal}`;
-
-  // Basic meta
+  breadcrumb.textContent = meal.strMeal;
   detailsImg.src = meal.strMealThumb;
-  detailsImg.alt = meal.strMeal;
-  detailsCategory.textContent = meal.strCategory || '-';
-  detailsSource.textContent = meal.strSource ? new URL(meal.strSource).hostname : '—';
-  detailsSource.href = meal.strSource || '#';
+  detailsCategory.textContent = meal.strCategory||'-';
 
-  // Tags
-  detailsTags.innerHTML = '';
-  if (meal.strTags){
-    meal.strTags.split(',').map(t=>t.trim()).filter(Boolean).forEach(t=>{
-      const span = document.createElement('span');
-      span.className = 'tag';
-      span.textContent = t;
-      detailsTags.appendChild(span);
-    });
-  }
+  if(meal.strSource && meal.strSource.startsWith("http")){
+    detailsSource.textContent = new URL(meal.strSource).hostname;
+    detailsSource.href = meal.strSource;
+  }else{ detailsSource.textContent='—'; detailsSource.removeAttribute('href'); }
 
-  // Ingredients + measures (1..20)
-  ingredientsList.innerHTML = '';
-  measureList.innerHTML = '';
-  for (let i=1; i<=20; i++){
-    const ing = meal[`strIngredient${i}`];
-    const meas = meal[`strMeasure${i}`];
+  detailsTags.innerHTML='';
+  if(meal.strTags){ meal.strTags.split(',').forEach(t=>{
+    const span=document.createElement('span'); span.className='tag'; span.textContent=t.trim();
+    detailsTags.appendChild(span);
+  }); }
+
+  ingredientsList.innerHTML=''; measureList.innerHTML='';
+  for(let i=1;i<=20;i++){
+    const ing=meal[`strIngredient${i}`], meas=meal[`strMeasure${i}`];
     if(ing && ing.trim()){
-      const liI = document.createElement('li');
-      liI.textContent = `${ing}`;
-      ingredientsList.appendChild(liI);
-
-      const liM = document.createElement('li');
-      liM.textContent = `${meas || ''}`.trim();
-      measureList.appendChild(liM);
+      const liI=document.createElement('li'); liI.textContent=ing; ingredientsList.appendChild(liI);
+      const liM=document.createElement('li'); liM.textContent=(meas||'').trim(); measureList.appendChild(liM);
     }
   }
 
-  // Instructions -> split into steps
-  const steps = (meal.strInstructions || '')
-    .replace(/\r/g,'')
-    .split(/\n+/)
-    .map(s => s.trim())
-    .filter(Boolean);
+  const steps=(meal.strInstructions||'').split(/\n+/).filter(Boolean);
+  instructionsList.innerHTML=steps.map(s=>`<li>${s}</li>`).join('');
 
-  instructionsList.innerHTML = steps.map(s => `<li>${s}</li>`).join('');
-
-  detailsSection.classList.remove('hidden');
+  setView('details');
 }
 
-/* ===== INIT ===== */
+/* ==== Init ==== */
 loadCategories();
+setView('home');
