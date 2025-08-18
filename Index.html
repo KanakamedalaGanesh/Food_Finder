@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Meal Finder</title>
-  <link rel="stylesheet" href="./Style.css"/>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
   <!-- Top Bar -->
@@ -28,44 +28,22 @@
   </aside>
   <div id="backdrop" class="backdrop"></div>
 
-  <!-- Hero -->
+  <!-- Hero Section -->
   <section class="hero">
     <div class="hero-inner">
       <div class="searchbar">
-        <input id="searchInput" type="text" placeholder="Search recipes here ..." />
-        <button id="searchBtn" class="search-btn" aria-label="Search">
-          🔍
-        </button>
+        <input id="searchInput" type="text" placeholder="Search recipes here ..."/>
+        <button id="searchBtn" class="search-btn" aria-label="Search">🔍</button>
       </div>
       <h1 class="hero-title">What are your favorite cuisines?</h1>
       <p class="hero-sub">PERSONALIZE YOUR EXPERIENCE</p>
     </div>
   </section>
 
-  <!-- Category description (appears after choosing a category) -->
-  <section id="categoryAbout" class="category-about hidden">
-    <h3 id="aboutTitle"></h3>
-    <p id="aboutText"></p>
-  </section>
-
-  <!-- Meals (search results / filtered) -->
-  <section class="section">
-    <div class="section-head">
-    </div>
-    <div id="mealsGrid" class="card-grid"></div>
-  </section>
-
-  <!-- Categories grid (always visible like screenshots) -->
-  <section class="section">
-    <div class="section-head">
-      <h2>Categories</h2>
-    </div>
-    <div id="categoriesGrid" class="card-grid"></div>
-  </section>
-
   <!-- Meal Details -->
   <section id="mealDetails" class="details hidden">
     <div class="breadcrumb" id="breadcrumb"></div>
+    <h3 class="section-head">Meal Details</h3>
 
     <div class="details-body">
       <div class="details-image">
@@ -104,6 +82,28 @@
     </div>
   </section>
 
-  <script src="./Script.js"></script>
+  <!-- Category Description -->
+  <section id="categoryAbout" class="category-about hidden">
+    <h3 id="aboutTitle"></h3>
+    <p id="aboutText"></p>
+  </section>
+
+  <!-- Meals Grid -->
+  <section id="mealsSection" class="section hidden">
+    <div class="section-head">
+      <h2 id="mealsHeading">Meals</h2>
+    </div>
+    <div id="mealsGrid" class="card-grid"></div>
+  </section>
+
+  <!-- Categories Grid -->
+  <section id="categoriesSection" class="section">
+    <div class="section-head">
+      <h2>Categories</h2>
+    </div>
+    <div id="categoriesGrid" class="card-grid"></div>
+  </section>
+
+  <script src="script.js"></script>
 </body>
 </html>
