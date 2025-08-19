@@ -1,4 +1,6 @@
-* { box-sizing: border-box; }
+*{ 
+  box-sizing: border-box; 
+}
 :root {
   --orange: #ea6a1a;
   --text: #222;
@@ -32,7 +34,14 @@ body {
   font-weight: 700; 
   display: flex; 
   align-items: center; 
-  gap: 8px; 
+  gap: 3px; 
+  height : 20px;
+}
+
+.brand a {
+  text-decoration: none;
+  color: #f1f5f9;
+  
 }
 
 /* Hamburger */
