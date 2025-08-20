@@ -1,4 +1,4 @@
-// Grab elements
+// Elements
 const drawer = document.getElementById('drawer');
 const backdrop = document.getElementById('backdrop');
 const hamburger = document.getElementById('hamburger');
